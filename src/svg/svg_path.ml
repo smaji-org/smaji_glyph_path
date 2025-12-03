@@ -534,32 +534,33 @@ let sub_to_string_hum sub=
 let to_string_hum t=
   t |> List.map sub_to_string_hum |> String.concat ";; "
 
-let sub_to_string_svg ?prev ?(indent=0) sub=
+let sub_to_string_svg ?(close=true) ?prev ?(indent=0) sub=
   let indent= String.make indent ' ' in
   let start= match sub.start with
-    | Absolute p-> sprintf "\n%sM %s,%s"
+    | Absolute p-> sprintf "%sM %s,%s"
       indent
       (string_of_float p.x)
       (string_of_float p.y)
     | Relative p->
       match prev with
       | Some Point.{x;y}->
-        sprintf "\n%sM %s,%s" indent
+        sprintf "%sM %s,%s" indent
           (string_of_float (x+.p.x))
           (string_of_float (y+.p.y))
       | None->
-        sprintf "\n%sm %s,%s"
+        sprintf "%sm %s,%s"
           indent
           (string_of_float p.x)
           (string_of_float p.y)
   and segments=
     sub.segments |> List.map string_of_command_svg
   in
-  String.concat (sprintf "\n%s" indent) (start::segments @ ["Z"])
+  let path= if close then start::segments @ ["Z"] else start::segments in
+  String.concat (sprintf "\n%s" indent) path
 
 
-let to_string_svg ?(indent=0) t= t
-  |> List.map (sub_to_string_svg ~indent)
+let to_string_svg ?(close=true) ?(indent=0) t= t
+  |> List.map (sub_to_string_svg ~close ~indent)
   |> String.concat "\n"
 
 module Parser = struct

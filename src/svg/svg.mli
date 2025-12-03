@@ -17,7 +17,7 @@ module Svg_path = Svg_path
 type t = { viewBox : ViewBox.t; paths : Svg_path.t list; }
 (** The type of svg, consists of viewBox and paths *)
 
-val svg_string_of_t : ?indent:int -> t -> string
+val svg_string_of_t : ?close:bool -> ?indent:int -> t -> string
 (** Return the svg-formatted plain text *)
 
 val set_viewBox : ViewBox.t -> t -> t
@@ -34,10 +34,10 @@ module Adjust : sig
   (** [viewBox_fitFrame svg] recalculate the best fit viewBox frame of the content of [svg], and then reset it *)
 
   val scale : x:float -> y:float -> t -> t
-  (** Scale the content of the graphics by [x] and [y], viewBox is not changed *)
+  (** Scale the content of the graphics by [x] and [y], viewBox is not affected *)
 
   val translate : dx:float -> dy:float -> t -> t
-  (** Move the content of the graphics by [dx] and [dy], viewBox is not changed *)
+  (** Move the content of the graphics by [dx] and [dy], viewBox is not affected *)
 end
 
 val of_string : string -> t option

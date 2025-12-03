@@ -16,7 +16,7 @@ type t= {
   paths: Svg_path.t list;
 }
 
-let svg_string_of_t ?(indent=0) t=
+let svg_string_of_t ?(close=true) ?(indent=0) t=
   let step= 2 in
   let open Printf in
   let viewBox= ViewBox.to_string_svg t.viewBox in
@@ -24,7 +24,7 @@ let svg_string_of_t ?(indent=0) t=
     |> List.map (fun path->
       sprintf "%s<path d=\"%s\"\n%s/>"
         (String.make (indent+step) ' ')
-        (Svg_path.to_string_svg ~indent:(indent+step*2) path)
+        (Svg_path.to_string_svg ~close ~indent:(indent+step*2) path)
         (String.make (indent+step) ' ')
       )
     |> String.concat "\n"
@@ -49,10 +49,10 @@ module Adjust = struct
   let viewBox_fitFrame t= t.paths
     |> Svg_path.get_frame_paths
     |> Option.map @@ fun frame->
-      let height= frame.Path.max_y -. frame.min_y
-      and width= frame.max_x -. frame.min_x
-      and min_x= frame.min_x
-      and min_y= frame.min_y in
+      let height= frame.Path.height
+      and width= frame.width
+      and min_x= frame.x
+      and min_y= frame.y in
       ViewBox.{ min_x; min_y; width; height }
 
   let viewBox_fitFrame_reset t=

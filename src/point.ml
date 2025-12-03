@@ -132,5 +132,29 @@ module PointF = struct
     | fst::snd::thd::tl-> perimeter fst 0. fst (snd::thd::tl)
     | _-> 0.
 
+  let angle vector=
+    let open Float in
+    let angle=
+      let c= (pow vector.x 2.) +. (pow vector.y 2.) |> sqrt in
+      let rotate= vector.y /.  c |> asin in
+      if vector.x >= 0. then
+        if vector.y >= 0. then
+          rotate
+        else
+          2. *. pi +. rotate
+      else
+        pi -. rotate
+    in
+    angle
+
+  let rotate ~angle:_angle point=
+    let angle_point= angle point in
+    let angle_rotate= _angle +. angle_point in
+    let open Float in
+    let length= pow point.x 2. +. pow point.y 2. |> sqrt in
+    let x= cos angle_rotate *. length
+    and y= sin angle_rotate *. length in
+    {x;y}
+
 end
 

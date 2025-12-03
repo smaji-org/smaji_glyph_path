@@ -24,13 +24,16 @@ type segment =
   | SCcurve of { ctrl : point; end' : point; }
     (** Cubic Bézier Curve consists of previous end', previous reflection of ctrl2, ctrl and end' *)
 
+val segment_end : segment -> point
 
 type t = { start : point; segments : segment list; }
 (** The type of glyph path *)
 
+val get_end : t -> point
+
 type frame = {
-  min_x: Point.cell; min_y: Point.cell;
-  max_x: Point.cell; max_y: Point.cell;
+  x: Point.cell; y: Point.cell;
+  width: Point.cell; height: Point.cell;
 }
 
 val frame_merge : frame -> frame -> frame
@@ -55,5 +58,27 @@ val frame_segment : point -> segment -> frame
 val frame : t -> frame * point
 (** calcuate the best fit frame of the path *)
 
+val frame_dummy : frame
+
 val frame_algo_svg : t -> frame * point
 (** calcuate the best fit frame of the path by the algorithm used in SVG image processing *)
+
+val segment_map :
+  op:(point -> 'a -> point) -> param:'a -> segment -> segment
+  (** Return the value of [op segment param] *)
+
+val segment_translate : d:Point.t -> segment -> segment
+  (** Return the value of [Point.(+) segment ~d] *)
+
+val segment_scale : r:Point.t -> segment -> segment
+  (** Return the value of [Point.( * ) segment ~r] *)
+
+val translate : d:Point.t -> t -> t
+  (** Translate path by [d], the new coordinate is t + d *)
+
+val scale : r:Point.t -> t -> t
+  (** Scale path by [d], the new coordinate is t * r *)
+
+val fit_frame : ?algo:(t -> frame * point) -> target:frame -> t list -> t list
+  (** Scale and translate the paths so that the whole of them will fit the [target] frame *)
+

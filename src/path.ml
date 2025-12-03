@@ -20,19 +20,31 @@ type segment=
   | SQcurve of point
   | SCcurve of { ctrl: point; end': point }
 
+let segment_end= function
+  | Line p-> p
+  | Qcurve c-> c.end'
+  | Ccurve c-> c.end'
+  | SQcurve p-> p
+  | SCcurve c-> c.end'
+
 type t= {
   start: point;
   segments: segment list;
 }
 
+let get_end t=
+  match List.rev t.segments with
+  | []-> t.start
+  | last::_-> segment_end last
+
 type frame = {
-  min_x: Point.cell; min_y: Point.cell;
-  max_x: Point.cell; max_y: Point.cell;
+  x: Point.cell; y: Point.cell;
+  width: Point.cell; height: Point.cell;
 }
 
 let frame_dummy= {
-  min_x= Float.infinity; min_y= Float.infinity;
-  max_x= Float.neg_infinity; max_y= Float.neg_infinity;
+  x= Float.infinity; y= Float.infinity;
+  width= Float.neg_infinity; height= Float.neg_infinity;
 }
 
 let segment_to_string  ?(indent=0) segment=
@@ -74,26 +86,76 @@ let is_closed path=
 
 let is_open= Fun.negate is_closed
 
+let segment_map ~op ~param seg=
+  let op v= op v param in
+  match seg with
+  | Line end'-> Line (op end')
+  | Qcurve { ctrl; end' }->
+    let ctrl= op ctrl
+    and end'= op end' in
+    Qcurve {ctrl; end'}
+  | Ccurve { ctrl1; ctrl2; end' }->
+    let ctrl1= op ctrl1
+    and ctrl2= op ctrl2
+    and end'= op end' in
+    Ccurve {ctrl1; ctrl2; end'}
+  | SQcurve end'-> SQcurve (op end')
+  | SCcurve { ctrl; end' }->
+    let ctrl= op ctrl
+    and end'= op end' in
+    SCcurve {ctrl; end'}
+
+let segment_translate ~d seg=
+  segment_map ~op:Point.(+) ~param:d seg
+
+let segment_scale ~r seg=
+  segment_map ~op:Point.( * ) ~param:r seg
+
+let translate ~d t=
+  let open Point in
+  let start= t.start + d in
+  let segments= t.segments
+    |> List.map (segment_translate ~d) in
+  { start; segments }
+
+let scale ~r t=
+  let open Point in
+  let start= t.start * r in
+  let segments= t.segments
+    |> List.map (segment_scale ~r) in
+  { start; segments }
+
 let frame_update (point:point) frame=
-  let min_x= min point.x frame.min_x
-  and min_y= min point.y frame.min_y
-  and max_x= max point.x frame.max_x
-  and max_y= max point.y frame.max_y in
-  { min_x; min_y; max_x; max_y }
+  if Float.is_infinite frame.x
+    || Float.is_infinite frame.y
+    || Float.is_infinite frame.width
+    || Float.is_infinite frame.height
+  then
+    { x= point.x; y= point.y; width= 0.; height= 0. }
+  else
+    let origin_x_max= frame.x +. frame.width
+    and origin_y_max= frame.y +. frame.height in
+    let x= min point.x frame.x
+    and y= min point.y frame.y in
+    let width= max (point.x-.x) (origin_x_max -. x)
+    and height= max (point.y-.y) (origin_y_max -. y) in
+    { x; y; width; height }
 
 let frame_merge f1 f2=
-  let min_x= min f1.min_x f2.min_x
-  and min_y= min f1.min_y f2.min_y
-  and max_x= max f1.max_x f2.max_x
-  and max_y= max f1.max_y f2.max_y in
-  { min_x; min_y; max_x; max_y }
+  let x= min f1.x f2.x
+  and y= min f1.y f2.y in
+  let max_x= max (f1.x+.f1.width) (f2.x+.f2.width)
+  and max_y= max (f1.y+.f1.height) (f2.y+.f2.height) in
+  let width= max_x -. x
+  and height= max_y -. y in
+  { x; y; width; height }
 
 let frame_to_string frame=
-  Printf.sprintf "{ min_x= %s; min_y= %s; max_x= %s; max_y= %s }"
-    (string_of_float frame.min_x)
-    (string_of_float frame.min_y)
-    (string_of_float frame.max_x)
-    (string_of_float frame.max_y)
+  Printf.sprintf "{ x= %s; y= %s; width= %s; height= %s }"
+    (string_of_float frame.x)
+    (string_of_float frame.y)
+    (string_of_float frame.width)
+    (string_of_float frame.height)
 
 let frame_of_points points=
   List.fold_left (Fun.flip frame_update) frame_dummy points
@@ -156,7 +218,14 @@ let frame path=
   let acc= frame_dummy
   and prev_end= path.start
   and prev_ctrl= None in
-  calc acc prev_ctrl prev_end path.segments
+  let (frame, last)= calc acc prev_ctrl prev_end path.segments in
+  let frame=
+    { frame with
+      width= max 1. frame.width;
+      height= max 1. frame.height;
+    }
+  in
+  (frame, last)
 
 let frame_algo_svg path=
   let rec calc acc prev prev_ctrl prev_end segments=
@@ -215,4 +284,43 @@ let frame_algo_svg path=
   and prev_end= path.start
   and prev_ctrl= None in
   calc acc prev prev_ctrl prev_end path.segments
+
+let frame_paths ?(algo=frame) paths=
+  let frames= paths |> List.map (fun path->
+    let (frame,_)= algo path in frame)
+  in
+  List.fold_left frame_merge frame_dummy frames
+
+let fit_frame ?(algo=frame) ~target paths=
+  let frame_paths= frame_paths ~algo in
+  let paths_frame= frame_paths paths in
+  let size_paths=
+    Point.{
+      x= paths_frame.width;
+      y= paths_frame.height;
+    }
+  and size_target=
+    Point.{
+      x= target.width;
+      y= target.height;
+    }
+  and pos_target=
+    Point.{
+      x= target.x;
+      y= target.y;
+    }
+  in
+  let ratio= let open Point in size_target / size_paths in
+  let paths_current= List.map (scale ~r:ratio) paths in
+  let paths_current_frame= frame_paths paths_current in
+  let delta=
+    let open Point in
+    let pos_paths= {
+      x= paths_current_frame.x;
+      y= paths_current_frame.y;
+    } in
+    pos_target - pos_paths
+  in
+  let paths_current= List.map (translate ~d:delta) paths_current in
+  paths_current
 

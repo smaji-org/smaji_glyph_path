@@ -37,6 +37,8 @@ module PointF : sig
   val abs : t -> t
   val distance : t -> t -> float
   val perimeter : t list -> float
+  val angle : t -> cell
+  val rotate : angle:cell -> t -> t
   val zero : t
   val to_pointi : t -> PointI.t
   val of_pointi : PointI.t -> t

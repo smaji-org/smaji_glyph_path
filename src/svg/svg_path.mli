@@ -134,9 +134,9 @@ val sub_to_string_hum : sub -> string
 val to_string_hum : t -> string
 
 val sub_to_string_svg :
-  ?prev:point -> ?indent:int -> sub -> string
+  ?close:bool -> ?prev:point -> ?indent:int -> sub -> string
 
-val to_string_svg : ?indent:int -> t -> string
+val to_string_svg : ?close:bool -> ?indent:int -> t -> string
 
 (** {2 Parse and return path commands } *)
 
