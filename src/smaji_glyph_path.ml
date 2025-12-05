@@ -29,7 +29,7 @@ let glif_of_svg_exn (svg:Svg.t)=
         let identifier= None
         and points= sub
           |> Svg_path.sub_to_path
-          |> Glif.points_of_outline_exn
+          |> Glif.points_of_path
         in
         Glif.Contour { identifier; points })
       |> List.concat

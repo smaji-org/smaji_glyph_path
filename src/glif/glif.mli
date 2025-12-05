@@ -30,6 +30,7 @@ type component = {
 (** xScale, xyScale, yxScale, yScale, xOffset, yOffset taken together in that order form an Affine transformation matrix, to be used to transform the base glyph. The default matrix is [1 0 0 1 0 0], the identity transformation. *)
 
 type contour_point_type =
+  | Move (**  	A point of this type must be the first in a contour. The reverse is not true: a contour does not necessarily start with a move point. When a contour does start with a move point, it signifies the beginning of an open contour. *)
   | Line (** Draw a straight line from the previous point to this point. The previous point must be a move, a line, a curve or a qcurve. It must not be an offcurve. *)
   | Offcurve (** This point is part of a curve segment that goes up to the next point that is either a curve or a qcurve. *)
   | Curve (** Draw a cubic bezier curve from the last non-offcurve point to this point. The number of offcurve points can be zero, one or two. If the number of offcurve points is zero, a straight line is drawn. If it is one, a quadratic curve is drawn. If it is two, a regular cubic bezier is drawn. *)
@@ -91,12 +92,6 @@ val of_string : string -> t
 
 (** Convert contour_point list to the general outline path. *)
 val outline_of_points : contour_point list -> Path.t option
-
-(** Convert [Path.t] to a list of contour_point. The path must be closed, or None is retruned *)
-val points_of_outline : Path.t -> contour_point list option
-
-(** Convert [Path.t] to a list of contour_point. The path must be closed, or Invalid_argument is raised *)
-val points_of_outline_exn : Path.t -> contour_point list
 
 (** Convert [Path.t] to a list of contour_point. *)
 val points_of_path : Path.t -> contour_point list

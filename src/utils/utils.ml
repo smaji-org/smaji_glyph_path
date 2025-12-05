@@ -500,6 +500,13 @@ module Dlist = struct
   let head t= t.head
   let tail t= t.tail
 
+  let empty ()=
+    {
+      head= None;
+      tail= None;
+      length= 0;
+    }
+
   let init ~f n=
     let open Elt in
     if n < 0 then
@@ -875,20 +882,20 @@ module Circle = struct
           elt_left.right <- elt_new;
           map ~f circle elt_new elt_from.right
       in
-        let rec circle= {
-          entry= Some entry;
-          size= elt.circle.size;
-        }
-        and entry= {
-          value= f elt.value;
-          circle;
-          left= entry;
-          right= entry;
-        } in
-        let last= elt.right |> map ~f circle entry in
-        entry.left <- last;
-        last.right <- entry;
-        circle
+      let rec circle= {
+        entry= Some entry;
+        size= elt.circle.size;
+      }
+      and entry= {
+        value= f elt.value;
+        circle;
+        left= entry;
+        right= entry;
+      } in
+      let last= elt.right |> map ~f circle entry in
+      entry.left <- last;
+      last.right <- entry;
+      circle
     | None->
       {
         entry= None;

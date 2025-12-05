@@ -30,12 +30,14 @@ type component= {
 }
 
 type contour_point_type=
+  | Move
   | Line
   | Offcurve
   | Curve
   | Qcurve
 
 let contour_point_type_of_string= function
+  | "move"     -> Move
   | "line"     -> Line
   | "offcurve" -> Offcurve
   | "curve"    -> Curve
@@ -43,6 +45,7 @@ let contour_point_type_of_string= function
   | _          -> Offcurve
 
 let string_of_contour_point_type= function
+  | Move     -> "move"
   | Line     -> "line"
   | Offcurve -> "offcurve"
   | Curve    -> "curve"
@@ -201,6 +204,7 @@ let get_advance glyph=
     | Some width, Some height-> { width; height }
     )
   | exception Not_found-> { height= 0.; width= 0. }
+  | exception Ezxmlm.Tag_not_found _-> { height= 0.; width= 0. }
 
 let get_unicode glyph= glyph
   |> Ezxmlm.members_with_attr "unicode"
@@ -250,19 +254,65 @@ type ('a, 'b) either=
   | Left of 'a
   | Right of 'b
 
-let outline_of_points (points:contour_point list)=
+let outline_of_points_open head (points:contour_point list)=
+  let[@tail_mod_cons] rec build building (points:contour_point list)=
+    let open Point in
+    match points with
+    | []-> []
+    | point::tl->
+      match point.typ with
+      | Move-> invalid_arg "move point is only allowed as the first one"
+        (* A point of this type must be the first in a contour. It's ignored here. *)
+      | Line-> Path.Line {x= point.p.x; y= point.p.y} :: build [] tl
+      | Offcurve-> build (point.p::building) tl
+      | Curve->
+        (match List.length building with
+        | 0-> Path.Line {x= point.p.x; y= point.p.y} :: build [] tl
+        | 1->
+          let elt_ctrl= List.hd building in
+          let ctrl= Point.{x= elt_ctrl.x; y= elt_ctrl.y} in
+          let end'= Point.{x= point.p.x; y= point.p.y} in
+          Path.Qcurve { ctrl ; end' } :: build [] tl
+        | 2->
+          let elt_ctrl1= List.nth building 1
+          and elt_ctrl2= List.nth building 0 in
+          let ctrl1= {x=elt_ctrl1.x; y= elt_ctrl1.y}
+          and ctrl2= {x=elt_ctrl2.x; y= elt_ctrl2.y} in
+          let end'= {x=point.p.x; y=point.p.y} in
+          Path.Ccurve { ctrl1; ctrl2; end' } :: build [] tl
+        | _-> invalid_arg "malformed contour";
+        )
+      | Qcurve->
+        (match List.length building with
+        | 0-> Path.Line {x=point.p.x; y=point.p.y} :: build [] tl
+        | 1->
+          let ctrl= List.hd building in
+          let end'= point.p in
+          Path.Qcurve { ctrl ; end' } :: build [] tl
+        | _-> assert false;
+        )
+  in
+  try
+    let start= head.p in
+    let segments= build [] points in
+    Some Path.{ start; segments }
+  with Invalid_argument _-> None
+
+let outline_of_points_close (points:contour_point list)=
   let rec find_start elt=
     match elt.Circle.value.typ with
+    | Move-> elt
     | Line-> elt
     | Offcurve-> find_start elt.right
     | Curve-> elt
     | Qcurve-> elt
   in
-  let circle= Circle.of_list points in
   let build_next building (elt:contour_point Circle.elt)=
     let open Point in
     let value= elt.value in
     match value.typ with
+    | Move-> invalid_arg "move point is only allowed as the first one"
+      (* A point of this type must be the first in a contour. It's ignored here. *)
     | Line-> Right (Path.Line {x= value.p.x; y= value.p.y})
     | Offcurve-> Left (Dlist.insert_last building value)
     | Curve->
@@ -293,6 +343,7 @@ let outline_of_points (points:contour_point list)=
       | _-> assert false;
       )
   in
+  let circle= Circle.of_list points in
   match Circle.entry circle with
   | None-> None
   | Some entry->
@@ -307,14 +358,24 @@ let outline_of_points (points:contour_point list)=
           let building= Dlist.of_list [] in
           segment :: build building point.right
     in
-    let building= Dlist.of_list [] in
-    let segments= build building start.right in
-    let start= start.value.p in
-    Some Path.{ start; segments }
+    try
+      let building= Dlist.of_list [] in
+      let segments= build building start.right in
+      let start= start.value.p in
+      Some Path.{ start; segments }
+    with Invalid_argument _-> None
+
+let outline_of_points (points:contour_point list)=
+  match points with
+  | []-> None
+  | hd::tl->
+    match hd.typ with
+    | Move-> outline_of_points_open hd tl
+    | _-> outline_of_points_close points
 
 let points_of_path (path:Path.t)=
   let dummy= (Point.zero, Point.zero) in
-  let rec to_points
+  let[@tail_mod_cons] rec to_points
     prev (* used to calc the reflection of the control point *)
     (segments: Path.segment list)
     =
@@ -360,19 +421,11 @@ let points_of_path (path:Path.t)=
           { p= end'; typ= Curve } in
         p1::p2::p3 :: to_points (ctrl, end') tl
   in
-  to_points dummy path.segments
-
-let points_of_outline (path:Path.t)=
-  if Path.is_open path then
-    None
+  let points= to_points dummy path.segments in
+  if Path.is_closed path then
+    points
   else
-    path |> points_of_path |> Option.some
-
-let points_of_outline_exn (path:Path.t)=
-  if Path.is_open path then
-    invalid_arg "the path is not closed"
-  else
-    points_of_path path
+    { p= path.start; typ= Move } :: points
 
 let glif_string_of_unicodes ?(indent=0) unicodes=
   let indent_str= String.make indent ' ' in
