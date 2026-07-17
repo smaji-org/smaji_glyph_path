@@ -401,7 +401,7 @@ let points_of_path (path:Path.t)=
       | SQcurve end'->
         let ctrl=
           let (p1, p2)= prev in
-          Point.(p2 + p2 - p1)
+          Point.Ops.(p2 + p2 - p1)
         in
         let p1=
           { p= ctrl; typ= Offcurve }
@@ -411,7 +411,7 @@ let points_of_path (path:Path.t)=
       | SCcurve { ctrl; end'; } ->
         let ctrl1=
           let (p1, p2)= prev in
-          Point.(p2 + p2 - p1)
+          Point.Ops.(p2 + p2 - p1)
         in
         let p1=
           { p= ctrl1; typ= Offcurve }
@@ -486,12 +486,12 @@ let glif_string_of_t ?(indent=0) glif=
 "%s<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 %s<glyph name=\"%s\" format=\"%d\" formatMinor=\"%d\">
 %s<advance width=\"%s\" height=\"%s\" />
-%s
+%s%s
 %s
 %s</glyph>"
     indent_0
     indent_0 glif.name glif.format glif.formatMinor
     indent_1 (string_of_float glif.advance.width) (string_of_float glif.advance.height)
-    (glif_string_of_unicodes glif.unicodes)
+    indent_1 (glif_string_of_unicodes glif.unicodes)
     outline
     indent_0

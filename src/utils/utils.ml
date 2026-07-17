@@ -658,7 +658,7 @@ module Dlist = struct
         t.tail;
       Elt.remove elt;
     end
-    
+
   let iter ~f t=
     Option.iter (Elt.iter_right ~f) t.head
 

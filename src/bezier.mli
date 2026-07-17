@@ -9,84 +9,83 @@
  *)
 
 
-module PointI = Point.PointI
-module PointF = Point.PointF
+module Point = Point.PointF
 
-type point = PointF.t
+type point = Point.t
 
-val lerp : PointF.t -> PointF.t -> PointF.cell -> PointF.t
+val lerp : Point.t -> Point.t -> Point.cell -> Point.t
 
 val lerp2 :
-  PointF.t -> PointF.t -> PointF.t -> PointF.cell -> PointF.t
+  Point.t -> Point.t -> Point.t -> Point.cell -> Point.t
 
 val lerp3 :
-  PointF.t ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t ->
-  PointF.cell ->
-  PointF.t
+  Point.t ->
+  Point.t ->
+  Point.t ->
+  Point.t ->
+  Point.cell ->
+  Point.t
 
 val plot2 :
   ?s:int ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t list
+  Point.t ->
+  Point.t ->
+  Point.t ->
+  Point.t list
 
 val plot_quadratic :
   ?s:int ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t list
+  Point.t ->
+  Point.t ->
+  Point.t ->
+  Point.t list
 
 val plot3 :
   ?s:int ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t list
+  Point.t ->
+  Point.t ->
+  Point.t ->
+  Point.t ->
+  Point.t list
 
 val plot_cubic :
   ?s:int ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t list
+  Point.t ->
+  Point.t ->
+  Point.t ->
+  Point.t ->
+  Point.t list
 
 (*
 val draw2 :
   ?s:int ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t ->
-  (PointF.cell * PointF.cell) list
+  Point.t ->
+  Point.t ->
+  Point.t ->
+  (Point.cell * Point.cell) list
 
 val draw_quadratic :
   ?s:int ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t ->
-  (PointF.cell * PointF.cell) list
+  Point.t ->
+  Point.t ->
+  Point.t ->
+  (Point.cell * Point.cell) list
 
 val draw3 :
   ?s:int ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t ->
-  (PointF.cell * PointF.cell) list
+  Point.t ->
+  Point.t ->
+  Point.t ->
+  Point.t ->
+  (Point.cell * Point.cell) list
 
 val draw_cubic :
   ?s:int ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t ->
-  PointF.t ->
-  (PointF.cell * PointF.cell) list
+  Point.t ->
+  Point.t ->
+  Point.t ->
+  Point.t ->
+  (Point.cell * Point.cell) list
 *)
 
 (* val best_fit : (Float.t * Float.t) array -> point * point *)

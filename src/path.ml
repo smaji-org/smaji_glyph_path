@@ -10,6 +10,8 @@
 
 open Utils
 
+module Matrix = Point.Matrix
+module Line = Point.Line
 module Point = Point.PointF
 type point = Point.t
 
@@ -106,20 +108,20 @@ let segment_map ~op ~param seg=
     SCcurve {ctrl; end'}
 
 let segment_translate ~d seg=
-  segment_map ~op:Point.(+) ~param:d seg
+  segment_map ~op:Point.Ops.(+) ~param:d seg
 
 let segment_scale ~r seg=
-  segment_map ~op:Point.( * ) ~param:r seg
+  segment_map ~op:Point.Ops.( * ) ~param:r seg
 
 let translate ~d t=
-  let open Point in
+  let open Point.Ops in
   let start= t.start + d in
   let segments= t.segments
     |> List.map (segment_translate ~d) in
   { start; segments }
 
 let scale ~r t=
-  let open Point in
+  let open Point.Ops in
   let start= t.start * r in
   let segments= t.segments
     |> List.map (segment_scale ~r) in
@@ -195,7 +197,7 @@ let frame path=
     | SQcurve end' ::tl->
       let ctrl=
         match prev_ctrl with
-        | Some prev_ctrl-> Point.(prev_end + prev_end - prev_ctrl)
+        | Some prev_ctrl-> Point.Ops.(prev_end + prev_end - prev_ctrl)
         | None-> prev_end
       in
       let acc= Bezier.plot_quadratic prev_end ctrl end'
@@ -206,7 +208,7 @@ let frame path=
     | SCcurve { ctrl=ctrl2; end' } ::tl->
       let ctrl1=
         match prev_ctrl with
-        | Some prev_ctrl-> Point.(prev_end + prev_end - prev_ctrl)
+        | Some prev_ctrl-> Point.Ops.(prev_end + prev_end - prev_ctrl)
         | None-> prev_end
       in
       let acc= Bezier.plot_cubic prev_end ctrl1 ctrl2 end'
@@ -253,7 +255,7 @@ let frame_algo_svg path=
           (match prev with
           | Qcurve _
           | SQcurve _ ->
-            Point.(prev_end + prev_end - prev_ctrl)
+            Point.Ops.(prev_end + prev_end - prev_ctrl)
           | _-> prev_end)
         | None-> prev_end
       in
@@ -269,7 +271,7 @@ let frame_algo_svg path=
           (match prev with
           | Ccurve _
           | SCcurve _ ->
-            Point.(prev_end + prev_end - prev_ctrl)
+            Point.Ops.(prev_end + prev_end - prev_ctrl)
           | _-> prev_end)
         | None-> prev_end
       in
@@ -310,11 +312,12 @@ let fit_frame ?(algo=frame) ~target paths=
       y= target.y;
     }
   in
-  let ratio= let open Point in size_target / size_paths in
+  let ratio= let open Point.Ops in size_target / size_paths in
   let paths_current= List.map (scale ~r:ratio) paths in
   let paths_current_frame= frame_paths paths_current in
   let delta=
     let open Point in
+    let open Ops in
     let pos_paths= {
       x= paths_current_frame.x;
       y= paths_current_frame.y;

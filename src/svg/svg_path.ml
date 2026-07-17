@@ -67,8 +67,8 @@ type start_point=
   | Relative of point
 
 let point_translate ?(dx=0.) ?(dy=0.) p=
-  Point.({x=dx;y=dy} + p)
-let point_scale ?(x=1.) ?(y=1.) p= Point.({x;y} * p)
+  Point.Ops.({x=dx;y=dy} + p)
+let point_scale ?(x=1.) ?(y=1.) p= Point.Ops.({x;y} * p)
 
 let start_point_adjust_point ~dx ~dy= function
   | Absolute point-> Absolute (point_translate ~dx ~dy point)
@@ -414,6 +414,7 @@ let sub_of_path (path:Path.t)=
 let sub_to_path ?(straighten=false) ?(prev=Point.zero) sub=
   let[@tail_mod_cons] rec to_path prev segments=
     let open Point in
+    let open Ops in
     match segments with
     | []-> []
     | Cmd_L point :: tl-> Path.Line point :: to_path point tl
@@ -473,7 +474,7 @@ let sub_to_path ?(straighten=false) ?(prev=Point.zero) sub=
   let start=
     match sub.start with
     | Absolute point-> point
-    | Relative point-> Point.(prev + point)
+    | Relative point-> Point.Ops.(prev + point)
   in
   let segments= sub.segments |> to_path start in
   Path.{ start; segments }

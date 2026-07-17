@@ -22,6 +22,9 @@ module Svg = Svg
 module Glif = Glif
 (** Module used for glif outline *)
 
+module Bezier = Bezier
+(** Module used for bezier curve plotting *)
+
 module Utils = Utils
 (** Internal utils *)
 

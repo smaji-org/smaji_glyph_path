@@ -12,6 +12,7 @@ module Point = Point
 module Path= Path
 module Svg= Svg
 module Glif= Glif
+module Bezier = Bezier
 module Utils= Utils
 
 let glif_of_svg_exn (svg:Svg.t)=
