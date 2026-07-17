@@ -8,7 +8,7 @@
  * This file is a part of Smaji_glyph_outline.
  *)
 
-type point = Point.PointF.t
+type point = Point.t
 
 (** The type of description of cubic bézier curve command*)
 type cubic_desc = { ctrl1 : point; ctrl2 : point; end' : point; }

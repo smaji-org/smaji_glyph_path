@@ -9,8 +9,6 @@
  *)
 
 
-module Point = Point.PointF
-
 type point = Point.t
 
 let lerp p0 p1 s=

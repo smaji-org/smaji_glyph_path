@@ -10,9 +10,6 @@
 
 open Utils
 
-module Matrix = Point.Matrix
-module Line = Point.Line
-module Point = Point.PointF
 type point = Point.t
 
 type segment=

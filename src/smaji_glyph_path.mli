@@ -26,7 +26,16 @@ module Bezier = Bezier
 (** Module used for bezier curve plotting *)
 
 module Utils = Utils
-(** Internal utils *)
+(** Internal general utils *)
+
+module Matrix = Matrix
+(** Internal matrix utils *)
+
+module Line = Line
+(** Internal line utils *)
+
+module PointI = PointI
+(** PointI utilities *)
 
 val glif_of_svg : Svg.t -> Glif.t option
 (** Convert from svg to glif *)

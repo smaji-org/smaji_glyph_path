@@ -11,7 +11,6 @@
 open Utils
 open Printf
 
-module Point= Point.PointF
 type point = Point.t
 
 type cubic_desc = { ctrl1 : point; ctrl2 : point; end' : point; }

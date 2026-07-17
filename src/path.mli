@@ -8,9 +8,6 @@
  * This file is a part of Smaji_glyph_outline.
  *)
 
-module Matrix = Point.Matrix
-module Line = Point.Line
-module Point = Point.PointF
 type point= Point.t
 
 (** The type of 2d segment *)

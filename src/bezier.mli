@@ -9,82 +9,80 @@
  *)
 
 
-module Point = Point.PointF
-
 type point = Point.t
 
-val lerp : Point.t -> Point.t -> Point.cell -> Point.t
+val lerp : point -> point -> Point.cell -> point
 
 val lerp2 :
-  Point.t -> Point.t -> Point.t -> Point.cell -> Point.t
+  point -> point -> point -> Point.cell -> point
 
 val lerp3 :
-  Point.t ->
-  Point.t ->
-  Point.t ->
-  Point.t ->
+  point ->
+  point ->
+  point ->
+  point ->
   Point.cell ->
-  Point.t
+  point
 
 val plot2 :
   ?s:int ->
-  Point.t ->
-  Point.t ->
-  Point.t ->
-  Point.t list
+  point ->
+  point ->
+  point ->
+  point list
 
 val plot_quadratic :
   ?s:int ->
-  Point.t ->
-  Point.t ->
-  Point.t ->
-  Point.t list
+  point ->
+  point ->
+  point ->
+  point list
 
 val plot3 :
   ?s:int ->
-  Point.t ->
-  Point.t ->
-  Point.t ->
-  Point.t ->
-  Point.t list
+  point ->
+  point ->
+  point ->
+  point ->
+  point list
 
 val plot_cubic :
   ?s:int ->
-  Point.t ->
-  Point.t ->
-  Point.t ->
-  Point.t ->
-  Point.t list
+  point ->
+  point ->
+  point ->
+  point ->
+  point list
 
 (*
 val draw2 :
   ?s:int ->
-  Point.t ->
-  Point.t ->
-  Point.t ->
+  point ->
+  point ->
+  point ->
   (Point.cell * Point.cell) list
 
 val draw_quadratic :
   ?s:int ->
-  Point.t ->
-  Point.t ->
-  Point.t ->
+  point ->
+  point ->
+  point ->
   (Point.cell * Point.cell) list
 
 val draw3 :
   ?s:int ->
-  Point.t ->
-  Point.t ->
-  Point.t ->
-  Point.t ->
+  point ->
+  point ->
+  point ->
+  point ->
   (Point.cell * Point.cell) list
 
 val draw_cubic :
   ?s:int ->
-  Point.t ->
-  Point.t ->
-  Point.t ->
-  Point.t ->
+  point ->
+  point ->
+  point ->
+  point ->
   (Point.cell * Point.cell) list
 *)
 

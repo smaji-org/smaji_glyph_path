@@ -8,7 +8,6 @@
  * This file is a part of Smaji_glyph_path.
  *)
 
-module Point= Point.PointF
 type point = Point.t
 
 (** {2 Path command descriptions} *)

@@ -14,6 +14,9 @@ module Svg= Svg
 module Glif= Glif
 module Bezier = Bezier
 module Utils= Utils
+module Matrix = Matrix
+module Line = Line
+module PointI = PointI
 
 let glif_of_svg_exn (svg:Svg.t)=
   let name= ""

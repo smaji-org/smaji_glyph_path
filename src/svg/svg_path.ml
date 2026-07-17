@@ -11,7 +11,6 @@
 
 open Utils
 
-module Point= Point.PointF
 type point= Point.t
 
 type cubic_desc= {
