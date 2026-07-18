@@ -54,27 +54,12 @@ let plot3 ?s p0 p1 p2 p3=
 
 let plot_cubic= plot3
 
-(*
-let draw2 ?s p0 p1 p2=
-  plot2 ?s p0 p1 p2
-    |> List.map Point.to_tuple
-
-let draw_quadratic= draw2
-
-let draw3 ?s p0 p1 p2 p3=
-  plot3 ?s p0 p1 p2 p3
-    |> List.map Point.to_tuple
-
-let draw_cubic= draw3
-*)
-
-(*
-let best_fit plots= List.fold_left
-  (fun ((p_min, p_max): point * point) (x,y)->
-    let min_x= Float.min p_min.x x
-    and min_y= Float.min p_min.y y
-    and max_x= Float.max p_max.x x
-    and max_y= Float.max p_max.y y in
+let best_fit_frame plots= List.fold_left
+  (fun ((p_min, p_max): point * point) (p:point)->
+    let min_x= Float.min p_min.x p.x
+    and min_y= Float.min p_min.y p.y
+    and max_x= Float.max p_max.x p.x
+    and max_y= Float.max p_max.y p.y in
     let min= Point.{x= min_x; y= min_y}
     and max= Point.{x= max_x; y= max_y} in
     (min, max)
@@ -84,4 +69,3 @@ let best_fit plots= List.fold_left
     {x= Float.neg_infinity; y= Float.neg_infinity}
   )
   plots
-*)

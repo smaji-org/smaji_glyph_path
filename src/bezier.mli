@@ -54,36 +54,4 @@ val plot_cubic :
   point ->
   point list
 
-(*
-val draw2 :
-  ?s:int ->
-  point ->
-  point ->
-  point ->
-  (Point.cell * Point.cell) list
-
-val draw_quadratic :
-  ?s:int ->
-  point ->
-  point ->
-  point ->
-  (Point.cell * Point.cell) list
-
-val draw3 :
-  ?s:int ->
-  point ->
-  point ->
-  point ->
-  point ->
-  (Point.cell * Point.cell) list
-
-val draw_cubic :
-  ?s:int ->
-  point ->
-  point ->
-  point ->
-  point ->
-  (Point.cell * Point.cell) list
-*)
-
-(* val best_fit : (Float.t * Float.t) array -> point * point *)
+val best_fit_frame : point list -> point * point
