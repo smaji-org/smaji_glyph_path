@@ -8,11 +8,10 @@
  * This file is a part of Smaji_glyph_path.
  *)
 
+open! Bugfix
 open Result
 
-let string_of_float f=
-  let str= string_of_float f in
-  if String.ends_with ~suffix:"." str then str ^ "0" else str
+let string_ends_with= string_ends_with
 
 let xml_attr_opt name attrs=
   try Some (Ezxmlm.get_attr name attrs) with _-> None
@@ -929,3 +928,10 @@ module Circle = struct
     | None-> init
 end
 
+let in_channel_with_open_text path f=
+  let ch= open_in path in
+  try
+    let r= f ch in
+    close_in ch;
+    r
+  with e-> close_in ch; raise e

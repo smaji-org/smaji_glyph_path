@@ -9,6 +9,7 @@
  *)
 
 
+open! Bugfix
 open Point
 
 type column= { r1: cell; r2: cell }

@@ -9,7 +9,7 @@
  *)
 
 
-open Utils
+open! Bugfix
 
 type cell = float
 type t= {
@@ -66,21 +66,22 @@ let distance ?(from={x=0.;y=0.}) (p2:t)=
   and y= difference.y in
   x *. x +. y *. y |> Float.sqrt
 
-let perimeter points=
-  let rec perimeter fst acc prev points=
+let length points=
+  let rec length fst acc prev points=
     match points with
     | []->
       let acc= acc +. distance ~from:prev fst in
       acc
     | point::tl->
       let acc= acc +. distance ~from:point prev in
-      perimeter fst acc point tl
+      length fst acc point tl
   in
   match points with
   | [fst;snd]-> distance ~from:fst snd
-  | fst::snd::thd::tl-> perimeter fst 0. fst (snd::thd::tl)
+  | fst::snd::thd::tl-> length fst 0. fst (snd::thd::tl)
   | _-> 0.
 
+(*
 let angle vector=
   let open Float in
   let angle=
@@ -95,15 +96,7 @@ let angle vector=
       pi -. rotate
   in
   angle
-
-let rotate ~angle:_angle point=
-  let angle_point= angle point in
-  let angle_rotate= _angle +. angle_point in
-  let open Float in
-  let length= pow point.x 2. +. pow point.y 2. |> sqrt in
-  let x= cos angle_rotate *. length
-  and y= sin angle_rotate *. length in
-  {x;y}
+*)
 
 let radian vec=
   let length= distance vec in
@@ -116,4 +109,13 @@ let radian vec=
       x= -. vec.x;
       y= -. vec.y;
     }
+
+let rotate ~radian:_radian point=
+  let angle_point= radian point in
+  let angle_rotate= _radian +. angle_point in
+  let open Float in
+  let length= pow point.x 2. +. pow point.y 2. |> sqrt in
+  let x= cos angle_rotate *. length
+  and y= sin angle_rotate *. length in
+  {x;y}
 

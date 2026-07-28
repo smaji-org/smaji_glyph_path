@@ -13,18 +13,34 @@ type cell = float
 type t = { x : cell; y : cell }
 
 val abs : t -> t
+(** [abs x] is the absolute value of [x]. *)
+
 val distance : ?from:t -> t -> float
-val perimeter : t list -> float
-val angle : t -> cell
-val rotate : angle:cell -> t -> t
+(** [distance ?from to_] is the distance between [from] and [to_]. [from] is the original point if not specified. *)
+
+val length : t list -> float
+(** [length points] is the length of the path described by the sequential points in [points] *)
+
+val radian : t -> cell
+(** [radian p] is the radian angle of [p]. *)
+
+val rotate : radian:cell -> t -> t
+(** [rotate ~radian p] return the [radian] rotated vector. *)
+
 val zero : t
+(** The zero point. *)
+
 val to_pointi : t -> PointI.t
+(** [to_pointi p] convert [p] to a value, which is of type [PointI.t]. *)
+
 val of_pointi : PointI.t -> t
+(** [of_pointi p] convert [p], which is of type [PointI.t], to type [t]. *)
+
 val to_tuple : t -> cell * cell
 val of_tuple : cell * cell -> t
 val to_string : t -> string
 val neg : t -> t
-val radian : t -> cell
+(** [neg p] is the negative point of [p]. *)
 
 module Ops : sig
   val ( + ) : t -> t -> t

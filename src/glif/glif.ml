@@ -8,6 +8,7 @@
  * This file is a part of Smaji_glyph_outline.
  *)
 
+open! Bugfix
 open Utils
 open Printf
 
@@ -239,7 +240,7 @@ let of_string string=
   of_xml_nodes nodes
 
 let _load_file path=
-  In_channel.with_open_text path @@ fun chan->
+  in_channel_with_open_text path @@ fun chan->
   let _dtd, nodes= Ezxmlm.from_channel chan in
   of_xml_nodes nodes
 

@@ -8,8 +8,12 @@
  * This file is a part of Smaji_glyph_path.
  *)
 
+open! Bugfix
+
 module ViewBox = ViewBox
 module Svg_path = Svg_path
+
+open Utils
 
 type t= {
   viewBox: ViewBox.t;
@@ -103,7 +107,7 @@ let of_string str=
   of_xml_nodes nodes
 
 let load_file path=
-  In_channel.with_open_text path @@ fun chan->
+  in_channel_with_open_text path @@ fun chan->
   let _dtd, nodes= Ezxmlm.from_channel chan in
   of_xml_nodes nodes
 

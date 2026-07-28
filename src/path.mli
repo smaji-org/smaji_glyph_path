@@ -79,5 +79,5 @@ val scale : r:Point.t -> t -> t
   (** Scale path by [d], the new coordinate is t * r *)
 
 val fit_frame : ?algo:(t -> frame * point) -> target:frame -> t list -> t list
-  (** Scale and translate the paths so that the whole of them will fit the [target] frame *)
+  (** Scale and translate the paths so that the whole of them as a combined shape will fit the [target] frame *)
 

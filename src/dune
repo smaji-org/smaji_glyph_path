@@ -5,6 +5,5 @@
   (public_name smaji_glyph_path)
   (libraries ezxmlm)
   (flags (:standard -safe-string))
-  (preprocess (pps ppx_pipebang))
   )
 

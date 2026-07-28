@@ -8,7 +8,7 @@
  * This file is a part of Smaji_glyph_outline.
  *)
 
-open Utils
+open! Bugfix
 
 type t= {
   min_x: float;

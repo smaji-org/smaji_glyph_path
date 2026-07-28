@@ -9,7 +9,7 @@
  *)
 
 
-open Utils
+open! Bugfix
 
 type point= Point.t
 

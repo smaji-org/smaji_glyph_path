@@ -9,6 +9,7 @@
  *)
 
 
+open! Bugfix
 type cell = int
 type t= {
   x: cell;
@@ -51,17 +52,17 @@ let distance ?(from={x=0;y=0}) (p2:t)=
   let open Stdlib in
   x * x + y * y |> Float.of_int |> Float.sqrt
 
-let perimeter points=
-  let rec perimeter fst acc prev points=
+let length points=
+  let rec length fst acc prev points=
     match points with
     | []->
       let acc= acc +. distance ~from:prev fst in
       acc
     | point::tl->
       let acc= acc +. distance ~from:point prev in
-      perimeter fst acc point tl
+      length fst acc point tl
   in
   match points with
   | [fst;snd]-> distance ~from:fst snd
-  | fst::snd::thd::tl-> perimeter fst 0. fst (snd::thd::tl)
+  | fst::snd::thd::tl-> length fst 0. fst (snd::thd::tl)
   | _-> 0.

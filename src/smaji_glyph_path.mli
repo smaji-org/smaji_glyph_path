@@ -10,6 +10,9 @@
 
 (** A closed path is an outline. In a glif file, all its contours, by definition, are outlines. *)
 
+module Bugfix = Bugfix
+(** alter a behavior in the stdlib which in most cases is illegal outside the ocaml world *)
+
 module Point = Point
 (** Module used for basic point data structure *)
 
@@ -25,14 +28,14 @@ module Glif = Glif
 module Bezier = Bezier
 (** Module used for bezier curve plotting *)
 
-module Utils = Utils
-(** Internal general utils *)
-
 module Matrix = Matrix
-(** Internal matrix utils *)
+(** 2d matrix utils *)
 
 module Line = Line
-(** Internal line utils *)
+(** 2d line utils *)
+
+module Utils = Utils
+(** Internal general utils *)
 
 module PointI = PointI
 (** PointI utilities *)

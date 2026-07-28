@@ -13,13 +13,23 @@ type cell = int
 type t = { x : cell; y : cell }
 
 val abs : t -> t
+(** [abs x] is the absolute value of [x]. *)
+
 val distance : ?from:t -> t -> float
-val perimeter : t list -> float
+(** [distance ?from to_] is the distance between [from] and [to_]. [from] is the original point if not specified. *)
+
+val length : t list -> float
+(** [length points] is the total length of the path described by the sequential points in [points] *)
+
 val zero : t
+(** The zero point. *)
+
 val to_tuple : t -> cell * cell
 val of_tuple : cell * cell -> t
 val to_string : t -> string
+
 val neg : t -> t
+(** [neg p] is the negative point of [p]. *)
 
 module Ops : sig
   val ( + ) : t -> t -> t

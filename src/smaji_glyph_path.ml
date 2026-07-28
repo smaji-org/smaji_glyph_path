@@ -8,6 +8,8 @@
  * This file is a part of Smaji_glyph_path.
  *)
 
+open! Bugfix
+
 module Point = Point
 module Path= Path
 module Svg= Svg
@@ -17,6 +19,7 @@ module Utils= Utils
 module Matrix = Matrix
 module Line = Line
 module PointI = PointI
+module Bugfix = Bugfix
 
 let glif_of_svg_exn (svg:Svg.t)=
   let name= ""
