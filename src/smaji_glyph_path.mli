@@ -37,9 +37,6 @@ module Line = Line
 module Utils = Utils
 (** Internal general utils *)
 
-module PointI = PointI
-(** PointI utilities *)
-
 val glif_of_svg : Svg.t -> Glif.t option
 (** Convert from svg to glif *)
 

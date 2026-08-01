@@ -18,7 +18,6 @@ module Bezier = Bezier
 module Utils= Utils
 module Matrix = Matrix
 module Line = Line
-module PointI = PointI
 module Bugfix = Bugfix
 
 let glif_of_svg_exn (svg:Svg.t)=

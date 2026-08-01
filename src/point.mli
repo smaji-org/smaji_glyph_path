@@ -30,12 +30,6 @@ val rotate : radian:cell -> t -> t
 val zero : t
 (** The zero point. *)
 
-val to_pointi : t -> PointI.t
-(** [to_pointi p] convert [p] to a value, which is of type [PointI.t]. *)
-
-val of_pointi : PointI.t -> t
-(** [of_pointi p] convert [p], which is of type [PointI.t], to type [t]. *)
-
 val to_tuple : t -> cell * cell
 val of_tuple : cell * cell -> t
 val to_string : t -> string

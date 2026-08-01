@@ -27,16 +27,6 @@ let zero= {
   y= 0.;
 }
 
-let to_pointi p=
-  let x= int_of_float p.x
-  and y= int_of_float p.y in
-  PointI.{ x; y }
-
-let of_pointi (p:PointI.t)=
-  let x= float_of_int p.x
-  and y= float_of_int p.y in
-  { x; y }
-
 let to_tuple p=
   (p.x, p.y)
 let of_tuple (x,y)= {x;y}
