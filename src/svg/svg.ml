@@ -26,7 +26,7 @@ let svg_string_of_t ?(close=true) ?(indent=0) t=
   let viewBox= ViewBox.to_string_svg t.viewBox in
   let paths= t.paths
     |> List.map (fun path->
-      sprintf "%s<path d=\"%s\"\n%s/>"
+      sprintf "%s<path d=\"\n%s\"\n%s/>"
         (String.make (indent+step) ' ')
         (Svg_path.to_string_svg ~close ~indent:(indent+step*2) path)
         (String.make (indent+step) ' ')

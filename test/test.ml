@@ -9,6 +9,7 @@
  *)
 
 open Smaji_glyph_path
+open Bugfix
 
 
 module TestPath = struct
@@ -30,9 +31,9 @@ module TestPath = struct
     let path= { start; segments } in
     let frame, _prev= frame path in
     printf "%.3f, %.3f, %.3f, %.3f\n"
-      frame.min_x frame.min_y
-      frame.max_x frame.max_y;
-    [%expect "160.770, 320.000, 560.000, 652.982"]
+      frame.x frame.y
+      frame.width frame.height;
+    [%expect "160.770, 320.000, 399.230, 332.982"]
 
   let%expect_test "frame_algo_svg"=
     let start= {x= 200.; y= 400. }
@@ -48,9 +49,9 @@ module TestPath = struct
     let path= { start; segments } in
     let frame, _prev= frame_algo_svg path in
     printf "%.3f, %.3f, %.3f, %.3f\n"
-      frame.min_x frame.min_y
-      frame.max_x frame.max_y;
-    [%expect "160.770, 400.000, 550.000, 652.982"]
+      frame.x frame.y
+      frame.width frame.height;
+    [%expect "160.770, 400.000, 389.230, 252.982"]
 
 end
 
@@ -251,7 +252,8 @@ module TestSvg = struct
       |> Option.iter (fun frame-> frame
         |> Path.frame_to_string
         |> print_endline);
-    [%expect "{ min_x= 1.0; min_y= 2.0; max_x= 200.0; max_y= 61.1130602954 }"]
+    [%expect "{ x= 1.0; y= 2.0; width= 199.0; height= 59.1130602954 }"]
+
 
 
   let%expect_test "get_path_frame continuous"=
@@ -260,7 +262,8 @@ module TestSvg = struct
       |> Option.iter (fun frame-> frame
         |> Path.frame_to_string
         |> print_endline);
-    [%expect "{ min_x= 1.0; min_y= 2.0; max_x= 200.0; max_y= 64.2446752477 }"]
+    [%expect "{ x= 1.0; y= 2.0; width= 199.0; height= 62.2446752477 }"]
+
 
   let%expect_test "fit_frame_individual"=
     Svg.Adjust.viewBox_fitFrame_reset svg_individual |> Svg.svg_string_of_t |> print_endline;
@@ -393,8 +396,8 @@ module TestGlif = struct
         ListLabels.iter contour.points
           ~f:(fun point-> printf "%s %s %s\n"
             (string_of_contour_point_type point.typ)
-            (Utils.string_of_float point.p.x)
-            (Utils.string_of_float point.p.y)
+            (string_of_float point.p.x)
+            (string_of_float point.p.y)
             ))
     | None-> print_endline "");
     [%expect "
@@ -475,7 +478,7 @@ module TestGlif = struct
             |> Glif.outline_of_points
             |> Option.iter @@ fun path->
               path
-                |> Glif.points_of_outline_exn
+                |> Glif.points_of_path
                 |> List.map Glif.string_of_contour_point
                 |> String.concat "\n"
                 |> print_endline

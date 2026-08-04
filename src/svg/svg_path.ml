@@ -561,7 +561,7 @@ let sub_to_string_svg ?(close=true) ?prev ?(indent=0) sub=
 
 let to_string_svg ?(close=true) ?(indent=0) t= t
   |> List.map (sub_to_string_svg ~close ~indent)
-  |> String.concat "\n"
+  |> String.concat "\n\n"
 
 module Parser = struct
   type command=
