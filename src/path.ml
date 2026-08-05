@@ -125,20 +125,41 @@ let scale ~r t=
   { start; segments }
 
 let frame_update (point:point) frame=
-  if Float.is_infinite frame.x
-    || Float.is_infinite frame.y
-    || Float.is_infinite frame.width
-    || Float.is_infinite frame.height
-  then
-    { x= point.x; y= point.y; width= 0.; height= 0. }
-  else
-    let origin_x_max= frame.x +. frame.width
-    and origin_y_max= frame.y +. frame.height in
-    let x= min point.x frame.x
-    and y= min point.y frame.y in
-    let width= max (point.x-.x) (origin_x_max -. x)
-    and height= max (point.y-.y) (origin_y_max -. y) in
-    { x; y; width; height }
+  let open Float in
+  let x=
+    if point.x = neg_infinity then
+      neg_infinity
+    else
+      min point.x frame.x
+  and y=
+    if point.y = neg_infinity then
+      neg_infinity
+    else
+      min point.y frame.y
+  in
+  let max_x=
+    if frame.width = infinity then
+      infinity
+    else
+      max point.x (frame.x +. frame.width)
+  and max_y=
+    if frame.height = infinity then
+      infinity
+    else
+      max point.y (frame.y +. frame.height)
+  in
+  let width=
+    if x = max_x then
+      0.
+    else
+      max_x -. x
+  and height=
+    if y = max_y then
+      0.
+    else
+      max_y -. y
+  in
+  { x; y; width; height }
 
 let frame_merge f1 f2=
   let x= min f1.x f2.x
