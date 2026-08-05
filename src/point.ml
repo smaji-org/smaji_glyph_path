@@ -71,23 +71,6 @@ let length points=
   | fst::snd::thd::tl-> length fst 0. fst (snd::thd::tl)
   | _-> 0.
 
-(*
-let angle vector=
-  let open Float in
-  let angle=
-    let c= (pow vector.x 2.) +. (pow vector.y 2.) |> sqrt in
-    let rotate= vector.y /.  c |> asin in
-    if vector.x >= 0. then
-      if vector.y >= 0. then
-        rotate
-      else
-        2. *. pi +. rotate
-    else
-      pi -. rotate
-  in
-  angle
-*)
-
 let radian vec=
   let length= distance vec in
   let calc v= acos (v.x /. length) in

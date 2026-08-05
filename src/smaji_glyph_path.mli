@@ -44,5 +44,7 @@ val glif_of_svg_exn : Svg.t -> Glif.t
 (** Convert from svg to glif, Invalid_argument is raised for not closed svg path *)
 
 val svg_of_glif : Glif.t -> Svg.t
-(** Convert from glif to svg *)
+(** Convert from glif to svg.
+  glif composition is not supported in this low level library,
+  please visit project smaji_gsd or smaji_god for more information. *)
 

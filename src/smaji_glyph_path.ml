@@ -66,7 +66,7 @@ let svg_of_glif (glif:Glif.t)=
     |> List.filter_map @@ function
       | Glif.Component _component-> None
       (* glif composition is not supported in this low level library,
-         please visit project smaji_god for more information. *)
+         please visit project smaji_gsd or smaji_god for more information. *)
       | Glif.Contour contour-> contour.points
         |> Glif.outline_of_points
         |> Option.map @@ fun outline-> [Svg_path.sub_of_path outline]
