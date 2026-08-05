@@ -125,7 +125,6 @@ let scale ~r t=
   { start; segments }
 
 let frame_update (point:point) frame=
-  let open Float in
   let x=
     if point.x = neg_infinity then
       neg_infinity
@@ -164,8 +163,16 @@ let frame_update (point:point) frame=
 let frame_merge f1 f2=
   let x= min f1.x f2.x
   and y= min f1.y f2.y in
-  let max_x= max (f1.x+.f1.width) (f2.x+.f2.width)
-  and max_y= max (f1.y+.f1.height) (f2.y+.f2.height) in
+  let max_x=
+    if f1.width = infinity || f2.width = infinity then
+      infinity
+    else
+      max (f1.x+.f1.width) (f2.x+.f2.width)
+  and max_y=
+    if f1.height = infinity || f2.height = infinity then
+      infinity
+    else
+      max (f1.y+.f1.height) (f2.y+.f2.height) in
   let width= max_x -. x
   and height= max_y -. y in
   { x; y; width; height }
