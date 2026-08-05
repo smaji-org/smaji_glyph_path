@@ -17,11 +17,11 @@ module Svg_path = Svg_path
 type t = { viewBox : ViewBox.t; paths : Svg_path.t list; }
 (** The type of svg, consists of viewBox and paths *)
 
-val svg_string_of_t : ?close:bool -> ?indent:int -> t -> string
+val to_svg_string : ?close:bool -> ?indent:int -> t -> string
 (** Return the svg-formatted plain text *)
 
 val set_viewBox : ViewBox.t -> t -> t
-(** [set_viewBox viewBox svg] Return a new svg with its viewBox element changed to [viewBox] *)
+(** [set_viewBox viewBox svg] return a new svg with its viewBox element changed to [viewBox] *)
 
 module Adjust : sig
   val viewBox_reset : t -> t
@@ -44,8 +44,8 @@ val of_string : string -> t option
 (** [of_string string] returns [Some t] if the string represents a legal svg glyph path file, otherwise, [None] is returned *)
 
 val load_file : string -> t option
-(** [load_file path] returns [Some t] if the path point a legal svg glyph path file, otherwise, [None] is returned *)
+(** [load_file path] returns [Some t] if the [path] points to a legal svg glyph path file, otherwise, [None] is returned *)
 
 val load_file_exn : string -> t
-(** [load_file_exn path] returns [t] if the path point a legal svg glyph path file, otherwise error [Failure "load_file_exn"] is raised *)
+(** [load_file_exn path] returns [t] if the path points to a legal svg glyph path file, otherwise an exception is raised *)
 

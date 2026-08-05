@@ -20,7 +20,7 @@ type t= {
   paths: Svg_path.t list;
 }
 
-let svg_string_of_t ?(close=true) ?(indent=0) t=
+let to_svg_string ?(close=true) ?(indent=0) t=
   let step= 2 in
   let open Printf in
   let viewBox= ViewBox.to_string_svg t.viewBox in
@@ -106,13 +106,14 @@ let of_string str=
   let _dtd, nodes= Ezxmlm.from_string str in
   of_xml_nodes nodes
 
-let load_file path=
+let load_file_exn path=
   in_channel_with_open_text path @@ fun chan->
   let _dtd, nodes= Ezxmlm.from_channel chan in
-  of_xml_nodes nodes
-
-let load_file_exn path=
-  match load_file path with
+  match of_xml_nodes nodes with
   | Some svg-> svg
-  | None-> failwith "load_file"
+  | None-> invalid_arg "illegal gsd file"
+
+let load_file path=
+  try Some (load_file_exn path)
+  with _-> None
 
