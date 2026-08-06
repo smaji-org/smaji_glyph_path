@@ -167,27 +167,27 @@ let command_adjust_scale ~x ~y cmd=
 
 open Printf
 
-let string_of_start_point= function
+let start_point_to_string= function
   | Absolute p-> sprintf "Absolute %s,%s" (string_of_float p.x) (string_of_float p.y)
   | Relative p-> sprintf "Relative %s,%s" (string_of_float p.x) (string_of_float p.y)
 
-let string_of_start_point_svg= function
+let start_point_to_string_svg= function
   | Absolute p-> sprintf "M %s,%s" (string_of_float p.x) (string_of_float p.y)
   | Relative p-> sprintf "m %s,%s" (string_of_float p.x) (string_of_float p.y)
 
-let string_of_point (p:point)= sprintf "%s,%s"
+let point_to_string (p:point)= sprintf "%s,%s"
   (string_of_float p.x)
   (string_of_float p.y)
 
-let string_of_point_svg = function (x, y)-> sprintf "%s,%s" x y
+let point_to_string_svg = function (x, y)-> sprintf "%s,%s" x y
 
-let string_of_cubic_desc desc=
+let cubic_desc_to_string desc=
   sprintf "{ctrl1: %s; ctrl2: %s; end: %s}"
-    (string_of_point desc.ctrl1)
-    (string_of_point desc.ctrl2)
-    (string_of_point desc.end')
+    (point_to_string desc.ctrl1)
+    (point_to_string desc.ctrl2)
+    (point_to_string desc.end')
 
-let string_of_cubic_desc_svg desc=
+let cubic_desc_to_string_svg desc=
   sprintf "%s,%s,%s,%s,%s,%s"
     (string_of_float desc.ctrl1.x)
     (string_of_float desc.ctrl1.y)
@@ -196,40 +196,40 @@ let string_of_cubic_desc_svg desc=
     (string_of_float desc.end'.x)
     (string_of_float desc.end'.y)
 
-let string_of_s_cubic_desc desc=
+let s_cubic_desc_to_string desc=
   sprintf "{ctrl2: %s; end: %s}"
-    (string_of_point desc.ctrl2)
-    (string_of_point desc.end')
+    (point_to_string desc.ctrl2)
+    (point_to_string desc.end')
 
-let string_of_s_cubic_desc_svg desc=
+let s_cubic_desc_to_string_svg desc=
   sprintf "%s,%s,%s,%s"
     (string_of_float desc.ctrl2.x)
     (string_of_float desc.ctrl2.y)
     (string_of_float desc.end'.x)
     (string_of_float desc.end'.y)
 
-let string_of_quadratic_desc desc=
+let quadratic_desc_to_string desc=
   sprintf "{ctrl: %s; end: %s}"
-    (string_of_point desc.ctrl)
-    (string_of_point desc.end')
+    (point_to_string desc.ctrl)
+    (point_to_string desc.end')
 
-let string_of_quadratic_desc_svg desc=
+let quadratic_desc_to_string_svg desc=
   sprintf "%s,%s,%s,%s"
     (string_of_float desc.ctrl.x)
     (string_of_float desc.ctrl.y)
     (string_of_float desc.end'.x)
     (string_of_float desc.end'.y)
 
-let string_of_arc_desc desc=
+let arc_desc_to_string desc=
   sprintf "{rx: %s; ry: %s; angle: %s; large_arc: %b; sweep: %b; end: %s}"
     (string_of_float desc.rx)
     (string_of_float desc.ry)
     (string_of_float desc.angle)
     desc.large_arc
     desc.sweep
-    (string_of_point desc.end')
+    (point_to_string desc.end')
 
-let string_of_arc_desc_svg desc=
+let arc_desc_to_string_svg desc=
   let boot_to_int= function true-> 1 | false-> 0 in
   sprintf "%s,%s,%s,%d,%d,%s,%s"
     (string_of_float desc.rx)
@@ -240,48 +240,48 @@ let string_of_arc_desc_svg desc=
     (string_of_float desc.end'.x)
     (string_of_float desc.end'.y)
 
-let string_of_command= function
-  | Cmd_L point-> point |> string_of_point |> sprintf "L %s"
-  | Cmd_l point-> point |> string_of_point |> sprintf "l %s"
+let command_to_string= function
+  | Cmd_L point-> point |> point_to_string |> sprintf "L %s"
+  | Cmd_l point-> point |> point_to_string |> sprintf "l %s"
   | Cmd_H float-> float |> string_of_float |> sprintf "H %s"
   | Cmd_h float-> float |> string_of_float |> sprintf "h %s"
   | Cmd_V float-> float |> string_of_float |> sprintf "V %s"
   | Cmd_v float-> float |> string_of_float |> sprintf "v %s"
 
-  | Cmd_C cubic_desc-> cubic_desc |> string_of_cubic_desc |> sprintf "C %s"
-  | Cmd_c cubic_desc-> cubic_desc |> string_of_cubic_desc |> sprintf "c %s"
-  | Cmd_S s_cubic_desc-> s_cubic_desc |> string_of_s_cubic_desc |> sprintf "S %s"
-  | Cmd_s s_cubic_desc-> s_cubic_desc |> string_of_s_cubic_desc |> sprintf "s %s"
+  | Cmd_C cubic_desc-> cubic_desc |> cubic_desc_to_string |> sprintf "C %s"
+  | Cmd_c cubic_desc-> cubic_desc |> cubic_desc_to_string |> sprintf "c %s"
+  | Cmd_S s_cubic_desc-> s_cubic_desc |> s_cubic_desc_to_string |> sprintf "S %s"
+  | Cmd_s s_cubic_desc-> s_cubic_desc |> s_cubic_desc_to_string |> sprintf "s %s"
 
-  | Cmd_Q quadratic_desc-> quadratic_desc |> string_of_quadratic_desc |> sprintf "Q %s"
-  | Cmd_q quadratic_desc-> quadratic_desc |> string_of_quadratic_desc |> sprintf "q %s"
-  | Cmd_T desc-> desc.end' |> string_of_point |> sprintf "T %s"
-  | Cmd_t desc-> desc.end' |> string_of_point |> sprintf "t %s"
+  | Cmd_Q quadratic_desc-> quadratic_desc |> quadratic_desc_to_string |> sprintf "Q %s"
+  | Cmd_q quadratic_desc-> quadratic_desc |> quadratic_desc_to_string |> sprintf "q %s"
+  | Cmd_T desc-> desc.end' |> point_to_string |> sprintf "T %s"
+  | Cmd_t desc-> desc.end' |> point_to_string |> sprintf "t %s"
 
-  | Cmd_A arc_desc-> arc_desc |> string_of_arc_desc |> sprintf "A %s"
-  | Cmd_a arc_desc-> arc_desc |> string_of_arc_desc |> sprintf "a %s"
+  | Cmd_A arc_desc-> arc_desc |> arc_desc_to_string |> sprintf "A %s"
+  | Cmd_a arc_desc-> arc_desc |> arc_desc_to_string |> sprintf "a %s"
 
 
-let string_of_command_svg= function
-  | Cmd_L point-> point |> string_of_point |> sprintf "L %s"
-  | Cmd_l point-> point |> string_of_point |> sprintf "l %s"
+let command_to_string_svg= function
+  | Cmd_L point-> point |> point_to_string |> sprintf "L %s"
+  | Cmd_l point-> point |> point_to_string |> sprintf "l %s"
   | Cmd_H float-> float |> string_of_float |> sprintf "H %s"
   | Cmd_h float-> float |> string_of_float |> sprintf "h %s"
   | Cmd_V float-> float |> string_of_float |> sprintf "V %s"
   | Cmd_v float-> float |> string_of_float |> sprintf "v %s"
 
-  | Cmd_C cubic_desc-> cubic_desc |> string_of_cubic_desc_svg |> sprintf "C %s"
-  | Cmd_c cubic_desc-> cubic_desc |> string_of_cubic_desc_svg |> sprintf "c %s"
-  | Cmd_S s_cubic_desc-> s_cubic_desc |> string_of_s_cubic_desc_svg |> sprintf "S %s"
-  | Cmd_s s_cubic_desc-> s_cubic_desc |> string_of_s_cubic_desc_svg |> sprintf "s %s"
+  | Cmd_C cubic_desc-> cubic_desc |> cubic_desc_to_string_svg |> sprintf "C %s"
+  | Cmd_c cubic_desc-> cubic_desc |> cubic_desc_to_string_svg |> sprintf "c %s"
+  | Cmd_S s_cubic_desc-> s_cubic_desc |> s_cubic_desc_to_string_svg |> sprintf "S %s"
+  | Cmd_s s_cubic_desc-> s_cubic_desc |> s_cubic_desc_to_string_svg |> sprintf "s %s"
 
-  | Cmd_Q quadratic_desc-> quadratic_desc |> string_of_quadratic_desc_svg |> sprintf "Q %s"
-  | Cmd_q quadratic_desc-> quadratic_desc |> string_of_quadratic_desc_svg |> sprintf "q %s"
-  | Cmd_T desc-> desc.end' |> string_of_point |> sprintf "T %s"
-  | Cmd_t desc-> desc.end' |> string_of_point |> sprintf "t %s"
+  | Cmd_Q quadratic_desc-> quadratic_desc |> quadratic_desc_to_string_svg |> sprintf "Q %s"
+  | Cmd_q quadratic_desc-> quadratic_desc |> quadratic_desc_to_string_svg |> sprintf "q %s"
+  | Cmd_T desc-> desc.end' |> point_to_string |> sprintf "T %s"
+  | Cmd_t desc-> desc.end' |> point_to_string |> sprintf "t %s"
 
-  | Cmd_A arc_desc-> arc_desc |> string_of_arc_desc_svg |> sprintf "A %s"
-  | Cmd_a arc_desc-> arc_desc |> string_of_arc_desc_svg |> sprintf "a %s"
+  | Cmd_A arc_desc-> arc_desc |> arc_desc_to_string_svg |> sprintf "A %s"
+  | Cmd_a arc_desc-> arc_desc |> arc_desc_to_string_svg |> sprintf "a %s"
 
 
 type sub= {
@@ -410,7 +410,7 @@ let sub_of_path (path:Path.t)=
   in
   { start; segments }
 
-let sub_to_path ?(straighten=false) ?(prev=Point.zero) sub=
+let sub_to_path ?(prev=Point.zero) sub=
   let[@tail_mod_cons] rec to_path prev segments=
     let open Point in
     let open Ops in
@@ -458,17 +458,11 @@ let sub_to_path ?(straighten=false) ?(prev=Point.zero) sub=
       SQcurve end' :: to_path end' tl
 
     | Cmd_A arc_desc :: tl->
-      if straighten then
-        let end'= arc_desc.end' in
-        Path.Line end':: to_path end' tl
-      else
-        invalid_arg "elliptical arc unsupported"
+      let end'= arc_desc.end' in
+      Path.Line end':: to_path end' tl
     | Cmd_a arc_desc :: tl->
-      if straighten then
-        let end'= arc_desc.end' + prev in
-        Path.Line end':: to_path end' tl
-      else
-        invalid_arg "elliptical arc unsupported"
+      let end'= arc_desc.end' + prev in
+      Path.Line end':: to_path end' tl
   in
   let start=
     match sub.start with
@@ -478,29 +472,29 @@ let sub_to_path ?(straighten=false) ?(prev=Point.zero) sub=
   let segments= sub.segments |> to_path start in
   Path.{ start; segments }
 
-let get_frame_sub ?(straighten=false) ?(prev=Point.zero) sub=
-  sub |> sub_to_path ~straighten ~prev |> Path.frame_algo_svg
+let sub_frame ?(prev=Point.zero) sub=
+  sub |> sub_to_path ~prev |> Path.frame_algo_svg
 
 
-let get_frame t=
+let frame t=
   match t with
   | []-> None
   | hd::tl->
-    let frame, prev= get_frame_sub hd in
+    let frame, prev= sub_frame hd in
     let frame, _=
       ListLabels.fold_left tl
         ~init:(frame, prev)
         ~f:(fun (frame, prev) path->
-          let (frame_new, prev)= get_frame_sub ~prev path in
+          let (frame_new, prev)= sub_frame ~prev path in
           (Path.frame_merge frame frame_new, prev)
           )
     in Some frame
 
-let get_frame_paths paths=
+let paths_frame paths=
   ListLabels.fold_left paths
     ~init:None
     ~f:(fun acc path->
-      match get_frame path with
+      match frame path with
       | Some frame->
         (match acc with
         | Some acc-> Some (Path.frame_merge acc frame)
@@ -525,9 +519,9 @@ module Adjust = struct
 end
 
 let sub_to_string_hum sub=
-  let start= string_of_start_point sub.start
+  let start= start_point_to_string sub.start
   and segments=
-    sub.segments |> List.map string_of_command
+    sub.segments |> List.map command_to_string
   in
   String.concat "; " (start::segments)
 
@@ -553,7 +547,7 @@ let sub_to_string_svg ?(close=true) ?prev ?(indent=0) sub=
           (string_of_float p.x)
           (string_of_float p.y)
   and segments=
-    sub.segments |> List.map string_of_command_svg
+    sub.segments |> List.map command_to_string_svg
   in
   let path= if close then start::segments @ ["Z"] else start::segments in
   String.concat (sprintf "\n%s" indent) path
@@ -600,7 +594,7 @@ module Parser = struct
 
   let spaces= many space
 
-  let number_sep= spaces >> option (char ',') >> spaces
+  let number_sep= spaces >> char ',' >> spaces <|> many1 space
 
   let float1=
     let* neg= option (char '-') in

@@ -50,8 +50,8 @@ module Adjust = struct
     let paths= t.paths |> List.map (Svg_path.Adjust.translate ~dx ~dy) in
     { viewBox; paths }
 
-  let viewBox_fitFrame t= t.paths
-    |> Svg_path.get_frame_paths
+  let viewBox_fit_frame t= t.paths
+    |> Svg_path.paths_frame
     |> Option.map @@ fun frame->
       let height= frame.Path.height
       and width= frame.width
@@ -59,8 +59,8 @@ module Adjust = struct
       and min_y= frame.y in
       ViewBox.{ min_x; min_y; width; height }
 
-  let viewBox_fitFrame_reset t=
-    match viewBox_fitFrame t with
+  let viewBox_fit_frame_reset t=
+    match viewBox_fit_frame t with
     | None-> t
     | Some viewBox->
       { t with viewBox } |> viewBox_reset

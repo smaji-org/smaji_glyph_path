@@ -11,6 +11,7 @@
 open! Bugfix
 
 type point = Point.t
+type progress = float
 
 let lerp1 p0 p1 s=
   if s < 0. || s > 1. then invalid_arg "step is invalid";

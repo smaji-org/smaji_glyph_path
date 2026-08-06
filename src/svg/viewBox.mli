@@ -46,7 +46,7 @@ module Parser :
   end
 
 val of_string : string -> t option
-(** Parse and return viewBox from string *)
+(** Parse and return viewBox from a string. The string is formatted as four numbers seperated by comma or spaces. *)
 
 val to_string_hum : t -> string
 (** Convert viewBox to human readable string *)

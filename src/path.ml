@@ -67,7 +67,7 @@ let path_to_string ?(indent=0) path=
   in
   Printf.sprintf "%s{\n%s%s\n%s\n%s}" indent_str indent_str1 start segements indent_str
 
-let end_of_path path=
+let end_of_segments path=
   match path.segments with
   | []-> None
   | _->
@@ -79,14 +79,14 @@ let end_of_path path=
     | SCcurve { ctrl=_; end' }-> end'
 
 let is_closed path=
-  match end_of_path path with
+  match end_of_segments path with
   | Some end'-> path.start = end'
   | None-> false
 
 let is_open= Fun.negate is_closed
 
 let segment_map ~op ~param seg=
-  let op v= op v param in
+  let op v= op param v in
   match seg with
   | Line end'-> Line (op end')
   | Qcurve { ctrl; end' }->
@@ -187,7 +187,7 @@ let frame_to_string frame=
 let frame_of_points points=
   List.fold_left (Fun.flip frame_update) frame_dummy points
 
-let frame_segment prev segment=
+let segment_frame prev segment=
   let init= frame_dummy |> frame_update prev in
   match segment with
   | Line end'-> init |> frame_update end'

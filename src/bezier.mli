@@ -11,28 +11,33 @@
 
 type point = Point.t
 
+type progress = float
+(**
+  The progress of the curve.
+  It's a value that ranges from 0 to 1 inclusively. *)
+
 (** One-degree, a.k.a. linear curve. *)
 val lerp1 :
   point -> point ->
-  Point.cell ->
+  progress ->
   point
 
 (** Two-degree, a.k.a. quadratic curve. *)
 val lerp2 :
   point -> point -> point ->
-  Point.cell ->
+  progress ->
   point
 
 (** Three-degree, a.k.a. cubic curve. *)
 val lerp3 :
   point -> point -> point -> point ->
-  Point.cell ->
+  progress ->
   point
 
 (** Any-degree curve. *)
 val lerp :
   point list ->
-  Point.cell ->
+  progress ->
   point
 
 (** [plot2 ?s p0 p1 p2] plot an two-degree, a.k.a. quadratic curve, the total steps [?s] is default to the length of the path described by p0 p1 p2. *)

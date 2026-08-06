@@ -75,73 +75,97 @@ val command_adjust_scale : x:float -> y:float -> command -> command
 
 (** For each type, there are two versions of converter: with or without [_svg] suffix respectively. The [_svg] version converts the given value to svg-formatted plain text, while the other version converts the given value to human readable verion. *)
 
-val string_of_start_point : start_point -> string
+val start_point_to_string : start_point -> string
 
-val string_of_start_point_svg : start_point -> string
+val start_point_to_string_svg : start_point -> string
 
-val string_of_point : point -> string
+val point_to_string : point -> string
 
-val string_of_point_svg : string * string -> string
+val point_to_string_svg : string * string -> string
 
-val string_of_cubic_desc : cubic_desc -> string
+val cubic_desc_to_string : cubic_desc -> string
 
-val string_of_cubic_desc_svg : cubic_desc -> string
+val cubic_desc_to_string_svg : cubic_desc -> string
 
-val string_of_s_cubic_desc : s_cubic_desc -> string
+val s_cubic_desc_to_string : s_cubic_desc -> string
 
-val string_of_s_cubic_desc_svg : s_cubic_desc -> string
+val s_cubic_desc_to_string_svg : s_cubic_desc -> string
 
-val string_of_quadratic_desc : quadratic_desc -> string
+val quadratic_desc_to_string : quadratic_desc -> string
 
-val string_of_quadratic_desc_svg : quadratic_desc -> string
+val quadratic_desc_to_string_svg : quadratic_desc -> string
 
-val string_of_arc_desc : arc_desc -> string
+val arc_desc_to_string : arc_desc -> string
 
-val string_of_arc_desc_svg : arc_desc -> string
+val arc_desc_to_string_svg : arc_desc -> string
 
-val string_of_command : command -> string
+val command_to_string : command -> string
 
-val string_of_command_svg : command -> string
+val command_to_string_svg : command -> string
 
 (** {2 Sub segment and path descriptions} *)
 
 type sub = { start : start_point; segments : command list; }
+(** svg sub path *)
 
 type t = sub list
+(** By svg stanard, an svg path is a collection of sub paths. *)
 
 (** {2 Frame and frame arithemetic } *)
 
-val get_frame_sub : ?straighten:bool -> ?prev:point -> sub -> Path.frame * point
+val sub_frame : ?prev:point -> sub -> Path.frame * point
+(** Calcuate the best fit frame and the endpoint of the [sub]. *)
 
-val get_frame : t -> Path.frame option
+val frame : t -> Path.frame option
+(** Calcuate the best fit frame of [Svg_path.t]. *)
 
-val get_frame_paths : t list -> Path.frame option
+val paths_frame : t list -> Path.frame option
+(** Calcuate the best fit frame of [Svg_path.t list]. *)
 
 (** {2 Adjust sub segment or path } *)
 module Adjust :
   sig
     val translate_sub : dx:float -> dy:float -> sub -> sub
+    (** [translate_sub ~dx ~dy sub] translates the sub path [sub] by the given difference [dx], [dy] *)
+
     val scale_sub : x:float -> y:float -> sub -> sub
+    (** [scale_sub ~x ~y sub] scales the sub path [sub] by the given factor [x], [y] *)
+
     val translate : dx:float -> dy:float -> t -> t
+    (** [translate ~dx ~dy path] translates the [path] by the given difference [dx], [dy] *)
+
     val scale : x:float -> y:float -> t -> t
+    (** [scale ~x ~y path] scales the [path] by the given factor [x], [y] *)
   end
 
 (** {2 Convert sub segment or path to string } *)
 
 val sub_to_string_hum : sub -> string
+(** [sub_to_string_hum sub] is the human readable representation of [sub] *)
 
 val to_string_hum : t -> string
+(** [to_string_hum path] is the human readable representation of [path] *)
 
 val sub_to_string_svg :
   ?close:bool -> ?prev:point -> ?indent:int -> sub -> string
+(** [sub_to_string_svg ?close ?prev ?indent sub] is the svg formatted string of [sub].
+  - [close] is default to true, so a "Z" command is appended to make the path closed
+  - if [prev] is given, a relative path is reallocated based on it.
+  - [indent] is default to zero. An [indent] spaces prefixed string is returned.
+  *)
 
 val to_string_svg : ?close:bool -> ?indent:int -> t -> string
+(** [to_string_svg ?close ?indent path] is the svg formatted string of [path].
+  - [close] is default to true, so a "Z" command is appended to make the path closed
+  - [indent] is default to zero. An [indent] spaces prefixed string is returned.
+  *)
+
 
 (** {2 Parse and return path commands } *)
 
 module Parser :
 sig
-  open Utils
+  open Utils.MiniParsec
   type command =
       Cmd_M of point list
     | Cmd_m of point list
@@ -164,146 +188,61 @@ sig
     | Cmd_Z
     | Cmd_z
   val string_of_cl : char list -> string
-  val ( let* ) :
-    'a MiniParsec.parser ->
-    ('a -> 'b MiniParsec.parser) ->
-    MiniParsec.state -> ('b * MiniParsec.state, MiniParsec.error) result
-  val space : MiniParsec.state -> char MiniParsec.reply
-  val spaces : char list MiniParsec.parser
-  val number_sep :
-    MiniParsec.state ->
-    (char list * MiniParsec.state, MiniParsec.error) result
-  val float1 :
-    MiniParsec.state -> (float * MiniParsec.state, MiniParsec.error) result
-  val float2 :
-    MiniParsec.state ->
-    ((float * float) * MiniParsec.state, MiniParsec.error) result
-  val float4 :
-    MiniParsec.state ->
-    ((float * float * float * float) * MiniParsec.state, MiniParsec.error)
-    result
-  val float6 :
-    MiniParsec.state ->
-    ((float * float * float * float * float * float) * MiniParsec.state,
-     MiniParsec.error)
-    result
-  val point :
-    MiniParsec.state ->
-    (point * MiniParsec.state, MiniParsec.error) result
-  val tag_M :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_m :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_L :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_l :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_H :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_h :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_V :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_v :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_C :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_c :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_S :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_s :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_Q :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_q :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_T :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_t :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_A :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_a :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_Z :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val tag_z :
-    MiniParsec.state ->
-    (char * MiniParsec.state, MiniParsec.pos * string) result
-  val arc_desc :
-    MiniParsec.state ->
-    (arc_desc * MiniParsec.state, MiniParsec.error) result
-  val cmd_M :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_m :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_L :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_l :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_H :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_h :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_V :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_v :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_C :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_c :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_S :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_s :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_Q :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_q :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_T :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_t :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_A :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_a :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_Z :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val cmd_z :
-    MiniParsec.state -> (command * MiniParsec.state, MiniParsec.error) result
-  val path :
-    MiniParsec.state ->
-    (command list * MiniParsec.state, MiniParsec.error) result
+  val float1 : float parser
+  val float2 : (float * float) parser
+  val float4 : (float * float * float * float) parser
+  val float6 : (float * float * float * float * float * float) parser
+  val point : point parser
+  val tag_M : char parser
+  val tag_m : char parser
+  val tag_L : char parser
+  val tag_l : char parser
+  val tag_H : char parser
+  val tag_h : char parser
+  val tag_V : char parser
+  val tag_v : char parser
+  val tag_C : char parser
+  val tag_c : char parser
+  val tag_S : char parser
+  val tag_s : char parser
+  val tag_Q : char parser
+  val tag_q : char parser
+  val tag_T : char parser
+  val tag_t : char parser
+  val tag_A : char parser
+  val tag_a : char parser
+  val tag_Z : char parser
+  val tag_z : char parser
+  val arc_desc : arc_desc parser
+  val cmd_M : command parser
+  val cmd_m : command parser
+  val cmd_L : command parser
+  val cmd_l : command parser
+  val cmd_H : command parser
+  val cmd_h : command parser
+  val cmd_V : command parser
+  val cmd_v : command parser
+  val cmd_C : command parser
+  val cmd_c : command parser
+  val cmd_S : command parser
+  val cmd_s : command parser
+  val cmd_Q : command parser
+  val cmd_q : command parser
+  val cmd_T : command parser
+  val cmd_t : command parser
+  val cmd_A : command parser
+  val cmd_a : command parser
+  val cmd_Z : command parser
+  val cmd_z : command parser
+  val path : command list parser
 end
 
 val of_string : string -> t option
 (** Parse the d attribute and return the path *)
 
 val sub_of_path : Path.t -> sub
-(** Convert [Path.t] to [sub] command *)
+(** Convert [Path.t] to [sub] command. Note, [Svg_path.t] can not be converted to Path.t directly, since [Svg_path.t] is a list of sub paths. *)
 
-val sub_to_path : ?straighten:bool -> ?prev:point -> sub -> Path.t
-(** Convert [sub] command to [Path.t], this function will [straighten] elliptical arc if is specified as [true], otherwise Invalid_argument is raised *)
+val sub_to_path : ?prev:point -> sub -> Path.t
+(** Convert [sub] command to [Path.t]. this function will straighten elliptical arc since its not used in glyph path so it is not supported. *)
 

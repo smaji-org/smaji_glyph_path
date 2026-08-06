@@ -18,7 +18,10 @@ type t = { viewBox : ViewBox.t; paths : Svg_path.t list; }
 (** The type of svg, consists of viewBox and paths *)
 
 val to_svg_string : ?close:bool -> ?indent:int -> t -> string
-(** Return the svg-formatted plain text *)
+(** Return the svg-formatted plain text
+  - [close] is default to true, so a "Z" command is appended to make the path closed
+  - [indent] is default to zero. An [indent] spaces prefixed svg representation is returned.
+  *)
 
 val set_viewBox : ViewBox.t -> t -> t
 (** [set_viewBox viewBox svg] return a new svg with its viewBox element changed to [viewBox] *)
@@ -27,11 +30,11 @@ module Adjust : sig
   val viewBox_reset : t -> t
   (** [viewBox_reset svg] translate(move) the entire graphics until its [min_x] and [min_y] attributes of the viewBox is the original point *)
 
-  val viewBox_fitFrame : t -> ViewBox.t option
-  (** [viewBox_fitFrame svg] recalculate the best fit viewBox frame of the content of [svg], iff [svg] contains paths *)
+  val viewBox_fit_frame : t -> ViewBox.t option
+  (** [viewBox_fit_frame svg] recalculate the best fit viewBox frame of the content of [svg], iff [svg] contains paths *)
 
-  val viewBox_fitFrame_reset : t -> t
-  (** [viewBox_fitFrame svg] recalculate the best fit viewBox frame of the content of [svg], and then reset it *)
+  val viewBox_fit_frame_reset : t -> t
+  (** [viewBox_fit_frame svg] recalculate the best fit viewBox frame of the content of [svg], and then reset it *)
 
   val scale : x:float -> y:float -> t -> t
   (** Scale the content of the graphics by [x] and [y], viewBox is not affected *)

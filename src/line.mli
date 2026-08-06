@@ -10,10 +10,10 @@
 
 
 type yox= { slope: float; y: float  }
-(** [slope] is y over x and point {x=0; y} is the intersection point of this line and y-axis. *)
+(** [slope] is y over x, and point {x=0; y} is the intersection point of this line and y-axis. *)
 
 type xoy= { slope: float; x: float  }
-(** [slope] is x over y and point {x; y=0} is the intersection point of this line and x-axis. *)
+(** [slope] is x over y, and point {x; y=0} is the intersection point of this line and x-axis. *)
 
 (** Type [t] is either [yox] or [xoy] *)
 type t=
@@ -21,17 +21,18 @@ type t=
   | XoY of xoy
 
 val to_string : t -> string
+(** [to_string line] is the written representation of [line] *)
 
 type point = Point.t
 
 val of_vec_point : vec:point -> point -> t
-(** [of_vec_point ~vec point] is a line of which the slope is vec and it also passes through [point] *)
+(** [of_vec_point ~vec point] is a line passing through [pont] and its slope is [vec] *)
 
 val of_points : point -> point -> t
-(** [of_points p1 p2] is a line which passes through both [p1] and [p2] *)
+(** [of_points p1 p2] is a line passing through both [p1] and [p2] *)
 
 val of_slope : x:float -> y:float -> point -> t
-(** [of_slope ~x ~y point] is a line which passes through [point] and its slope is either [y over x] or [x or y] *)
+(** [of_slope ~x ~y point] is a line passing through [point] and its slope is either [y over x] or [x or y] *)
 
 type intersection = Point of point | Line of t | None
 (** Intersection of two lines *)

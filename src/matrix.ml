@@ -40,6 +40,14 @@ let anticlock ~radian=
   let radian= -. radian in
   clockwise ~radian
 
+let clockwise_d ~degree=
+  let radian= degree *. Float.pi /. 180. in
+  clockwise ~radian
+
+let anticlock_d ~degree=
+  let radian= degree *. Float.pi /. 180. in
+  anticlock ~radian
+
 let clockwise_90= { c1= {r1= 0.; r2= 1.}; c2= {r1= -1.;r2= 0.} }
 let anticlock_90= { c1= {r1= 0.; r2= -1.}; c2= {r1= 1.;r2= 0.} }
 let clockwise_180= { c1= {r1= -1.; r2= 0.}; c2= {r1= 0.;r2= -1.} }
