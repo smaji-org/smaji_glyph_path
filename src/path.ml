@@ -125,6 +125,9 @@ let scale ~r t=
   { start; segments }
 
 let frame_update (point:point) frame=
+  if frame = frame_dummy then
+    {x= point.x; y= point.y; width= 0.; height= 0.}
+  else
   let x=
     if point.x = neg_infinity then
       neg_infinity
@@ -161,6 +164,9 @@ let frame_update (point:point) frame=
   { x; y; width; height }
 
 let frame_merge f1 f2=
+  if f1 = frame_dummy then f2
+  else if f2 = frame_dummy then f1
+  else
   let x= min f1.x f2.x
   and y= min f1.y f2.y in
   let max_x=
