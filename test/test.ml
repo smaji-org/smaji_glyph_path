@@ -248,7 +248,7 @@ module TestSvg = struct
 
   let%expect_test "get_path_frame individual"=
     paths_individual
-      |> Svg.Svg_path.get_frame_paths
+      |> Svg.Svg_path.paths_frame
       |> Option.iter (fun frame-> frame
         |> Path.frame_to_string
         |> print_endline);
@@ -258,7 +258,7 @@ module TestSvg = struct
 
   let%expect_test "get_path_frame continuous"=
     paths_continuous
-      |> Svg.Svg_path.get_frame_paths
+      |> Svg.Svg_path.paths_frame
       |> Option.iter (fun frame-> frame
         |> Path.frame_to_string
         |> print_endline);
@@ -266,7 +266,7 @@ module TestSvg = struct
 
 
   let%expect_test "fit_frame_individual"=
-    Svg.Adjust.viewBox_fitFrame_reset svg_individual |> Svg.to_svg_string |> print_endline;
+    Svg.Adjust.viewBox_fit_frame_reset svg_individual |> Svg.to_svg_string |> print_endline;
     [%expect "
       <svg viewBox=\"0.0,0.0 199.0,59.1130602954\" xmlns=\"http://www.w3.org/2000/svg\">
         <path d=\"
@@ -288,7 +288,7 @@ module TestSvg = struct
       </svg>"]
 
   let%expect_test "fit_frame_continuous"=
-    Svg.Adjust.viewBox_fitFrame_reset svg_continuous |> Svg.to_svg_string |> print_endline;
+    Svg.Adjust.viewBox_fit_frame_reset svg_continuous |> Svg.to_svg_string |> print_endline;
     [%expect "
       <svg viewBox=\"0.0,0.0 199.0,62.2446752477\" xmlns=\"http://www.w3.org/2000/svg\">
         <path d=\"
@@ -310,8 +310,8 @@ module TestSvg = struct
 
   let%expect_test "sub_to_path"=
     let p1= Svg.Svg_path.sub_to_path path1 in
-    let prev= Path.end_of_path p1 in
-    let p2= Svg.Svg_path.sub_to_path ?prev path2 in
+    let prev= Path.get_end p1 in
+    let p2= Svg.Svg_path.sub_to_path ~prev path2 in
     Path.path_to_string p1 |> print_endline;
     [%expect {|
       {
@@ -359,7 +359,7 @@ module TestSvg = struct
   let%expect_test "file_fit_frame_a"=
     (match Svg.load_file "a.svg" with
     | Some svg->
-      svg |> Svg.Adjust.viewBox_fitFrame_reset |> Svg.to_svg_string |> print_endline
+      svg |> Svg.Adjust.viewBox_fit_frame_reset |> Svg.to_svg_string |> print_endline
     | None-> print_endline "");
     [%expect {|
       <svg viewBox="0.0,0.0 60.3,120.6" xmlns="http://www.w3.org/2000/svg">

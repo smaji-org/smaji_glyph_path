@@ -30,7 +30,7 @@ module Parser = struct
 
   let spaces1= many1 space
 
-  let number_sep= spaces >> char ',' >> spaces <|> many1 space
+  let number_sep= spaces >> option (char ',') >> spaces
 
   let float1=
     let* neg= option (char '-') in
